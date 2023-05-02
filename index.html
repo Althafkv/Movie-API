@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+</head>
+
+<body>
+    <div class="container">
+        <div class="search-container">
+            <input type="text" placeholder="Enter movie name" id="mname" value="lost" />
+            <button onclick="search()" id="search-btn">Search</button>
+        </div>
+        <div id="output"></div>
+    </div>
+</body>
+<script>
+
+    async function search() {
+        let movie = mname.value
+        if (movie) {
+            const movDetails = await fetch(`http://www.omdbapi.com/?t=${movie}&apikey=e17c0393`)
+            console.log(movDetails);
+            movDetails.json()
+                .then((result) => {
+                    if (result.Error) {
+                        console.log(result.Error);
+                        alert(result.Error)
+                    } else {
+                        console.log(result);
+                        output.innerHTML = `
+                    <div class="info">
+                <img src=${result.Poster} class="poster">
+                <div>
+                    <h2>${result.Title}</h2>
+                    <div class="rating">
+                        <h4>IMDb : <span>${result.imdbRating}</span></h4>
+                    </div>
+                    <div class="details">
+                        <span>${result.Rated}</span>
+                        <span>${result.Year}</span>
+                        <span>${result.Runtime}</span>
+                    </div>
+                    <div class="genre">
+                        <div>${result.Genre.split(",").join("</div><div>")}</div>
+                    </div>
+                </div>
+            </div>
+            <h3>Plot</h3>
+            <p>${result.Plot}</p>
+            <h3>Cast</h3>
+            <p>${result.Actors}</p>
+                    `
+                    }
+                })
+        } else {
+            alert('Please enter a valid output')
+        }
+    }
+
+</script>
+
+</html>
